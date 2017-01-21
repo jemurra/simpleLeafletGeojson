@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Geojson Load/title>
+
+    <link rel="stylesheet" href="LEAFLETCSSHERE.css" />
+    <link rel="stylesheet" href="style.css"/>
+    <script type="text/javascript" src="LEAFLETSOURCEHERE.js"></script>
+    <!--PUT YOUR EXTERNAL GEOJSON FILE HERE SAVED AS A JS VAR-->
+    <script type="text/javascript" src="GEOJSONHERE.js"></script>
+
+</head>
+<body>
+
+<div id="mymap"></div>
+</body>
+<script>
+    //init map here
+    var imap = L.map('mymap').setView([20.5, -20.65], 2);
+
+    //basemaps loaded from external source
+    var osmbase = new L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    });
+
+    var CartoDB_DarkMatter = L.tileLayer('http://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+    }).addTo(imap);
+
+    //function to open a popup when a feature is clicked
+    function openPopup(feature, layer){
+        var alink = feature.properties.FIELD;
+        var aname = feature.properties.FIELD;
+        var pContent = "<b>"+aname+"</b>"+"<br>"+"<a href='"+alink+"' target='_blank'>"+"More Info"+"</a>";
+        layer.bindPopup(pContent);
+    }
+
+    //load your external geojson file here
+    var advts = L.geoJson(rtrips,{
+        pointToLayer: function (feature, latlng) {
+            return L.marker(latlng, {
+                opacity: 1,
+                fillOpacity: 0.8
+            });
+        }
+        ,onEachFeature: openPopup
+    }).addTo(imap);
+
+    var baseLayers = {
+        "OSM Basemap": osmbase,
+        "Dark": CartoDB_DarkMatter
+
+    };
+
+    L.control.layers(baseLayers).addTo(imap);
+
+</script>
+
+</html>
